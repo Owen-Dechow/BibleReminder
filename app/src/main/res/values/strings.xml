@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">BibleReminder</string>
+    <string name="accessibility_description">
+        Detects when the Bible app is opened to provide reminders.
+    </string>
+    <string name="main_page_title">Bible Reminder</string>
+    <string name="accessibility_permission">Accessibility Access</string>
+    <string name="overlay_permission">Overlay Access</string>
+    <string name="notification_permission">Notification Access</string>
+    <string name="usage_permission">Usage Access</string>
+    <string name="service_switch_txt">Service Enabled</string>
+    <string name="bible_apps_btn_text">Select Bible Apps</string>
+    <string name="limited_apps_btn_text">Selected Limited Apps</string>
+</resources>
