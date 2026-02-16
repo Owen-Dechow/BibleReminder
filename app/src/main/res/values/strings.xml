@@ -11,4 +11,7 @@
     <string name="service_switch_txt">Service Enabled</string>
     <string name="bible_apps_btn_text">Select Bible Apps</string>
     <string name="limited_apps_btn_text">Selected Limited Apps</string>
+    <string name="time_reset_btn_text">Reset Time</string>
+    <string name="app_icon_description">App Icon</string>
+    <string name="time_ratio_label">Bible App Time Ratio</string>
 </resources>

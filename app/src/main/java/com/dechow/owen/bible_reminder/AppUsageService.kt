@@ -1,8 +1,6 @@
 package com.dechow.owen.bible_reminder
 
 import android.accessibilityservice.AccessibilityService
-import android.app.usage.UsageEvents
-import android.app.usage.UsageStatsManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToLong
 
 const val UPDATED_PREFS_SINGLE = "UPDATED_PREFS_SINGLE"
+const val RELOAD_DATA_SINGLE = "RELOAD_DATA"
 
 class AppUsageService : AccessibilityService() {
     private var currentPackage: String? = null
@@ -29,26 +28,38 @@ class AppUsageService : AccessibilityService() {
     override fun onServiceConnected() {
         overlay = OverlayManager(this)
 
-        val filter = IntentFilter(UPDATED_PREFS_SINGLE)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(
-                applicationUpdates,
-                filter,
-                Context.RECEIVER_NOT_EXPORTED
+        registerReceivers(
+            arrayOf(
+                Triple(UPDATED_PREFS_SINGLE, applicationUpdates, true),
+                Triple(RELOAD_DATA_SINGLE, reloadData, true),
+                Triple(Intent.ACTION_SCREEN_OFF, screenOff, false)
             )
-        } else {
-            @Suppress("UnspecifiedRegisterReceiverFlag")
-            registerReceiver(
-                applicationUpdates,
-                filter
-            )
-        }
+        )
 
         CoroutineScope(Dispatchers.IO).launch {
             data = Data(this@AppUsageService)
             data.load()
             hasPermissions = hasAllPermissions(application)
+        }
+    }
+
+    private fun registerReceivers(receivers: Array<Triple<String, BroadcastReceiver, Boolean>>) {
+        for (receiver in receivers) {
+            val filter = IntentFilter(receiver.first)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(
+                    receiver.second,
+                    filter,
+                    if (receiver.third) Context.RECEIVER_NOT_EXPORTED
+                    else Context.RECEIVER_EXPORTED
+                )
+            } else {
+                @Suppress("UnspecifiedRegisterReceiverFlag")
+                registerReceiver(
+                    receiver.second,
+                    filter
+                )
+            }
         }
     }
 
@@ -64,15 +75,13 @@ class AppUsageService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (!shouldRun(event)) return
-
-        if (event!!.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            onAppChange()
-        }
+        onAppChange(event!!.packageName.toString())
     }
 
-    private fun onAppChange() {
-        val newPackage = getRealForegroundApp() ?: return
+    private fun onAppChange(pack: String) {
         val newTime = System.currentTimeMillis()
+
+        if (pack == currentPackage) return
 
         if (packageStart != null) {
             val timeChange = newTime - packageStart!!
@@ -85,7 +94,7 @@ class AppUsageService : AccessibilityService() {
         }
 
         overlay.hideOverlay()
-        currentPackage = newPackage
+        currentPackage = pack
         packageStart = newTime
         handler.removeCallbacksAndMessages(null)
 
@@ -126,24 +135,22 @@ class AppUsageService : AccessibilityService() {
 
     override fun onInterrupt() {}
 
-    private fun getRealForegroundApp(): String? {
-        val usm = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        val end = System.currentTimeMillis()
-        val begin = end - 3000 // 3 seconds is enough
+    private val screenOff = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            onAppChange("")
+        }
+    }
 
-        val events = usm.queryEvents(begin, end)
-        var lastApp: String? = null
+    private val reloadData = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (!::data.isInitialized) return
+            data.loaded = false
 
-        val event = UsageEvents.Event()
-        while (events.hasNextEvent()) {
-            events.getNextEvent(event)
-
-            @Suppress("DEPRECATION") if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
-                lastApp = event.packageName
+            CoroutineScope(Dispatchers.IO).launch {
+                data.load()
+                hasPermissions = hasAllPermissions(application)
             }
         }
-
-        return lastApp
     }
 
     private val applicationUpdates = object : BroadcastReceiver() {
@@ -157,7 +164,6 @@ class AppUsageService : AccessibilityService() {
                 data = Data(this@AppUsageService)
                 data.load()
                 hasPermissions = hasAllPermissions(application)
-                sendNotification(application, "Update received", "")
             }
         }
     }

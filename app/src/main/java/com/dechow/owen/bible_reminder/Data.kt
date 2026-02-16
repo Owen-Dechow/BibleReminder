@@ -17,8 +17,8 @@ val Context.limitsDataStore by preferencesDataStore(name = "limits_prefs")
 class Data(context: Context) {
     private val dataStore = context.limitsDataStore
 
-    var bibles: List<String> = emptyList()
-    var limitedApps: List<String> = emptyList()
+    var bibles: MutableList<String> = mutableListOf()
+    var limitedApps: MutableList<String> = mutableListOf()
     var running: Boolean = false
     var loaded: Boolean = false
 
@@ -49,9 +49,10 @@ class Data(context: Context) {
     suspend fun load() {
         val prefs = dataStore.data.first()
 
-        bibles = prefs[Keys.BIBLES]?.toList() ?: listOf("com.sirma.mobile.bible.android")
+        bibles =
+            prefs[Keys.BIBLES]?.toMutableList() ?: mutableListOf("com.sirma.mobile.bible.android")
 
-        limitedApps = prefs[Keys.LIMITED_APPS]?.toList() ?: listOf()
+        limitedApps = prefs[Keys.LIMITED_APPS]?.toMutableList() ?: mutableListOf()
 
         bibleTime = prefs[Keys.BIBLE_TIME] ?: 0
         limitedTime = prefs[Keys.LIMITED_TIME] ?: 0
@@ -68,13 +69,15 @@ class Data(context: Context) {
         loaded = true
     }
 
-    fun savePrefs() {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStore.edit { prefs ->
-                prefs[Keys.BIBLES] = bibles.toSet()
-                prefs[Keys.LIMITED_APPS] = limitedApps.toSet()
-                prefs[Keys.TIME_RATIO] = timeRatio
-                prefs[Keys.RUNNING] = running
+    suspend fun savePrefs() {
+        dataStore.edit { prefs ->
+            prefs[Keys.BIBLES] = bibles.toSet()
+            prefs[Keys.LIMITED_APPS] = limitedApps.toSet()
+            prefs[Keys.TIME_RATIO] = timeRatio
+            prefs[Keys.RUNNING] = running
+
+            if (currentDay() != prefs[Keys.LAST_RESET_DAY]) {
+                resetDaily()
             }
         }
     }
@@ -89,7 +92,7 @@ class Data(context: Context) {
         }
     }
 
-    private fun resetDaily() {
+    fun resetDaily() {
         bibleTime = 0
         limitedTime = 0
 

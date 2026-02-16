@@ -35,8 +35,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".AppPickerActivity" />
-
         <service
             android:name=".AppUsageService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"

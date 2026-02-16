@@ -83,7 +83,10 @@ class OverlayManager(private val context: Context) {
         overlayView?.findViewById<TextView>(R.id.overlayText)?.text = message
         overlayView?.findViewById<Button>(R.id.overlayButton)?.apply {
             text = buttonText
-            setOnClickListener { onButtonClick() }
+            setOnClickListener {
+                onButtonClick()
+                hideOverlay()
+            }
         }
 
         windowManager.addView(overlayView, params)

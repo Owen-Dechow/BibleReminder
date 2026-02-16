@@ -56,6 +56,36 @@
             android:layout_height="wrap_content"
             android:text="@string/limited_apps_btn_text" />
 
+        <Button
+            android:id="@+id/time_reset_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/time_reset_btn_text" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time_ratio_label" />
+
+            <SeekBar
+                android:id="@+id/bible_app_time_seek"
+                android:layout_height="48dp"
+                android:layout_width="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/bible_app_view_number"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
         <Switch
             android:id="@+id/service_switch"
             android:layout_width="match_parent"
