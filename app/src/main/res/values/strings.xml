@@ -16,4 +16,5 @@
     <string name="time_ratio_label">Bible App Time Ratio</string>
     <string name="open_bible_btn">Open You Version</string>
     <string name="bible_switch_txt">You Version Installed</string>
+    <string name="info">Created by Owen Dechow</string>
 </resources>

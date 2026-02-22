@@ -27,6 +27,12 @@
             android:textAllCaps="false"
             android:textSize="34sp" />
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/info" />
+
         <Switch
             android:id="@+id/accessibility_switch"
             android:layout_width="match_parent"

@@ -18,7 +18,7 @@ fun isYouVersionInstalled(context: Context): Boolean {
     return try {
         context.packageManager.getApplicationInfo(YOU_VERSION_PACKAGE, 0)
         true
-    } catch (e: PackageManager.NameNotFoundException) {
+    } catch (_: PackageManager.NameNotFoundException) {
         false
     }
 }
@@ -28,7 +28,7 @@ fun openPlayStoreForYouVersion(context: Context) {
         val intent = Intent(Intent.ACTION_VIEW, "market://details?id=$YOU_VERSION_PACKAGE".toUri())
         intent.setPackage("com.android.vending") // Directs intent to only use the Play Store app
         context.startActivity(intent)
-    } catch (e: ActivityNotFoundException) {
+    } catch (_: ActivityNotFoundException) {
         val webIntent = Intent(
             Intent.ACTION_VIEW,
             "https://play.google.com".toUri()
@@ -36,11 +36,12 @@ fun openPlayStoreForYouVersion(context: Context) {
         webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         try {
             context.startActivity(webIntent)
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             sendNotification(
                 context,
                 "Can't Open/Install Bible",
-                "The You Version Bible can not be opened or installed"
+                "The You Version Bible can not be opened or installed",
+                NOTIFICATION_ID_NOT_INSTALLED
             )
         }
     }

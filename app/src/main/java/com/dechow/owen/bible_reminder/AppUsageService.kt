@@ -149,7 +149,7 @@ class AppUsageService : AccessibilityService() {
                 data.resetTime()
                 data.saveTimes()
                 hasPermissions = hasAllPermissions(application)
-                sendNotification(this@AppUsageService, "Service Reloaded", "")
+                sendNotification(this@AppUsageService, "Service Reloaded", "", NOTIFICATION_ID_RELOADED)
             }
         }
     }
@@ -165,7 +165,7 @@ class AppUsageService : AccessibilityService() {
                 data = Data(this@AppUsageService)
                 data.load()
                 hasPermissions = hasAllPermissions(application)
-                sendNotification(this@AppUsageService, "Service Reloaded", "")
+                sendNotification(this@AppUsageService, "Service Reloaded", "", NOTIFICATION_ID_RELOADED)
             }
         }
     }

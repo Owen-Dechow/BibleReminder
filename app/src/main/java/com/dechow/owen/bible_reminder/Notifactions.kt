@@ -6,12 +6,14 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 
-var id = 0
+const val NOTIFICATION_ID_RELOADED = 1
+const val NOTIFICATION_ID_NOT_INSTALLED = 1
 
 fun sendNotification(
     context: Context,
     title: String,
     message: String,
+    id: Int
 ) {
     val manager = context.getSystemService(NotificationManager::class.java)
 
@@ -28,10 +30,9 @@ fun sendNotification(
     val notification = NotificationCompat.Builder(context, "bible_usage_alerts")
         .setContentTitle(title)
         .setContentText(message)
-        .setSmallIcon(R.drawable.ic_notification)
+        .setSmallIcon(R.drawable.logo)
         .setAutoCancel(true)
         .build()
 
     manager.notify(id, notification)
-    id++
 }
