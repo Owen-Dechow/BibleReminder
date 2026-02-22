@@ -46,13 +46,17 @@ class MainActivity : ComponentActivity() {
         sendBroadcast(intent)
     }
 
-    private fun setupTimeSlider() {
+    private fun setSliderNum(num: Double) {
         val number: TextView = findViewById(R.id.bible_app_view_number)
+        number.text = ((100 * num).roundToInt() / 100).toString()
+    }
+
+    private fun setupTimeSlider() {
         val slider: SeekBar = findViewById(R.id.bible_app_time_seek)
 
         dataUserFn { data ->
             slider.progress = (data.timeRatio / MaxRatio * 100).roundToInt()
-            number.text = String.format("%.2f", data.timeRatio)
+            setSliderNum(data.timeRatio)
         }
 
         slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -60,7 +64,7 @@ class MainActivity : ComponentActivity() {
                 if (bar == null) return
 
                 val num = (bar.progress / 100.0) * MaxRatio
-                number.text = String.format("%.2f", num);
+                setSliderNum(num)
             }
 
             override fun onStartTrackingTouch(bar: SeekBar?) = Unit
@@ -69,7 +73,7 @@ class MainActivity : ComponentActivity() {
                 if (bar == null) return
 
                 val num = (bar.progress / 100.0) * MaxRatio
-                number.text = String.format("%.2f", num);
+                setSliderNum(num)
 
                 dataUserFn { data ->
                     data.timeRatio = num
@@ -104,16 +108,7 @@ class MainActivity : ComponentActivity() {
 
         val timeResetButton: Button = findViewById(R.id.time_reset_btn)
         timeResetButton.setOnClickListener {
-            dataUserFn { data ->
-                data.resetDaily()
-                data.saveTimes()
-                sendReloadDataBroadcast()
-                sendNotification(
-                    this,
-                    "Time Reset",
-                    "Your Bible and app limit time has been reset."
-                )
-            }
+            sendReloadDataBroadcast()
         }
     }
 
@@ -170,11 +165,16 @@ class MainActivity : ComponentActivity() {
         notificationPermission.setOnClickListener {
             requestNotificationPermission(this)
         }
+
+        val bibleInstalled: Switch = findViewById(R.id.bible_installed_switch)
+        bibleInstalled.isChecked = isYouVersionInstalled(this)
+        bibleInstalled.setOnClickListener {
+            openPlayStoreForYouVersion(this)
+        }
     }
 
     private suspend fun showAppSelectionDialog(
-        selected: MutableList<String>,
-        onSave: suspend () -> Unit
+        selected: MutableList<String>, onSave: suspend () -> Unit
     ) {
         val dialogView = layoutInflater.inflate(R.layout.app_select_dialog, null)
         val recyclerView: RecyclerView = dialogView.findViewById(R.id.app_list)
@@ -195,26 +195,21 @@ class MainActivity : ComponentActivity() {
                 isChecked = it.activityInfo.packageName in selected,
                 onToggle = { isChecked ->
                     if (isChecked) {
-                        if (it.activityInfo.packageName !in selected)
-                            selected.add(it.activityInfo.packageName)
+                        if (it.activityInfo.packageName !in selected) selected.add(it.activityInfo.packageName)
                     } else {
                         selected.remove(it.activityInfo.packageName)
                     }
-                }
-            )
+                })
         }
 
         val adapter = AppSelectAdapter(appList)
         recyclerView.adapter = adapter
 
         withContext(Dispatchers.Main) {
-            AlertDialog.Builder(this@MainActivity)
-                .setTitle("Select Apps")
-                .setView(dialogView)
+            AlertDialog.Builder(this@MainActivity).setTitle("Select Apps").setView(dialogView)
                 .setPositiveButton("Done") { _, _ ->
                     dataUserFn { onSave() }
-                }
-                .show()
+                }.show()
         }
     }
 

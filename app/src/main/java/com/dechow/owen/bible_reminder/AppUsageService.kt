@@ -50,8 +50,8 @@ class AppUsageService : AccessibilityService() {
                 registerReceiver(
                     receiver.second,
                     filter,
-                    if (receiver.third) Context.RECEIVER_NOT_EXPORTED
-                    else Context.RECEIVER_EXPORTED
+                    if (receiver.third) RECEIVER_NOT_EXPORTED
+                    else RECEIVER_EXPORTED
                 )
             } else {
                 @Suppress("UnspecifiedRegisterReceiverFlag")
@@ -126,7 +126,7 @@ class AppUsageService : AccessibilityService() {
                 overlay.showBottomText(allowedTime.toTimeString())
                 handler.postDelayed(this, 1000)
             } else {
-                overlay.showFullScreen("Time to read your Bible!", "Open YouVersion") {
+                overlay.showFullScreen {
                     launchYouVersion(application)
                 }
             }
@@ -144,11 +144,12 @@ class AppUsageService : AccessibilityService() {
     private val reloadData = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (!::data.isInitialized) return
-            data.loaded = false
 
             CoroutineScope(Dispatchers.IO).launch {
-                data.load()
+                data.resetTime()
+                data.saveTimes()
                 hasPermissions = hasAllPermissions(application)
+                sendNotification(this@AppUsageService, "Service Reloaded", "")
             }
         }
     }
@@ -164,6 +165,7 @@ class AppUsageService : AccessibilityService() {
                 data = Data(this@AppUsageService)
                 data.load()
                 hasPermissions = hasAllPermissions(application)
+                sendNotification(this@AppUsageService, "Service Reloaded", "")
             }
         }
     }

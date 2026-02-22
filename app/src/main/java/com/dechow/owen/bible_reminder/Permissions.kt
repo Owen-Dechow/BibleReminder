@@ -78,4 +78,5 @@ fun hasAllPermissions(context: Context): Boolean {
     return hasUsagePermission(context)
             && hasAccessibilityPermissions(context)
             && hasDrawOverlayPermission(context)
+            && isYouVersionInstalled(context)
 }

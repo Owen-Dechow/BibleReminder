@@ -9,7 +9,7 @@
     android:padding="24dp">
 
     <TextView
-        android:id="@+id/overlayText"
+        android:id="@+id/overlay_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
@@ -18,9 +18,9 @@
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/overlayButton"
+        android:id="@+id/overlay_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text="@string/open_bible_btn" />
 
 </LinearLayout>

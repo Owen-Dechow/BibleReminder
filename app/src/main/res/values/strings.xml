@@ -14,4 +14,6 @@
     <string name="time_reset_btn_text">Reset Time</string>
     <string name="app_icon_description">App Icon</string>
     <string name="time_ratio_label">Bible App Time Ratio</string>
+    <string name="open_bible_btn">Open You Version</string>
+    <string name="bible_switch_txt">You Version Installed</string>
 </resources>

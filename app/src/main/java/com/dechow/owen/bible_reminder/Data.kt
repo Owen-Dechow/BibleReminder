@@ -50,21 +50,14 @@ class Data(context: Context) {
         val prefs = dataStore.data.first()
 
         bibles =
-            prefs[Keys.BIBLES]?.toMutableList() ?: mutableListOf("com.sirma.mobile.bible.android")
+            prefs[Keys.BIBLES]?.toMutableList() ?: mutableListOf(YOU_VERSION_PACKAGE)
 
         limitedApps = prefs[Keys.LIMITED_APPS]?.toMutableList() ?: mutableListOf()
 
         bibleTime = prefs[Keys.BIBLE_TIME] ?: 0
         limitedTime = prefs[Keys.LIMITED_TIME] ?: 0
         timeRatio = prefs[Keys.TIME_RATIO] ?: 4.0
-        running = prefs[Keys.RUNNING] ?: false
-
-        val lastReset = prefs[Keys.LAST_RESET_DAY] ?: 0L
-        val today = currentDay()
-
-        if (today != lastReset) {
-            resetDaily()
-        }
+        running = prefs[Keys.RUNNING] == true
 
         loaded = true
     }
@@ -75,10 +68,6 @@ class Data(context: Context) {
             prefs[Keys.LIMITED_APPS] = limitedApps.toSet()
             prefs[Keys.TIME_RATIO] = timeRatio
             prefs[Keys.RUNNING] = running
-
-            if (currentDay() != prefs[Keys.LAST_RESET_DAY]) {
-                resetDaily()
-            }
         }
     }
 
@@ -92,7 +81,7 @@ class Data(context: Context) {
         }
     }
 
-    fun resetDaily() {
+    fun resetTime() {
         bibleTime = 0
         limitedTime = 0
 
@@ -100,13 +89,8 @@ class Data(context: Context) {
             dataStore.edit { prefs ->
                 prefs[Keys.BIBLE_TIME] = 0
                 prefs[Keys.LIMITED_TIME] = 0
-                prefs[Keys.LAST_RESET_DAY] = currentDay()
             }
         }
-    }
-
-    private fun currentDay(): Long {
-        return System.currentTimeMillis() / (24 * 60 * 60 * 1000)
     }
 
     private object Keys {
@@ -116,6 +100,5 @@ class Data(context: Context) {
         val LIMITED_TIME = longPreferencesKey("limited_time")
         val TIME_RATIO = doublePreferencesKey("time_ratio")
         val RUNNING = booleanPreferencesKey("running")
-        val LAST_RESET_DAY = longPreferencesKey("last_reset_day")
     }
 }

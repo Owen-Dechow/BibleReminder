@@ -46,12 +46,10 @@ class OverlayManager(private val context: Context) {
             windowManager.addView(overlayView, params)
         }
 
-        overlayView?.findViewById<TextView>(R.id.overlayText)?.text = text
+        overlayView?.findViewById<TextView>(R.id.overlay_text)?.text = text
     }
 
     fun showFullScreen(
-        message: String,
-        buttonText: String,
         onButtonClick: () -> Unit
     ) {
         if (overlayView != null) {
@@ -80,9 +78,7 @@ class OverlayManager(private val context: Context) {
 
         params.gravity = Gravity.CENTER
 
-        overlayView?.findViewById<TextView>(R.id.overlayText)?.text = message
-        overlayView?.findViewById<Button>(R.id.overlayButton)?.apply {
-            text = buttonText
+        overlayView?.findViewById<Button>(R.id.overlay_button)?.apply {
             setOnClickListener {
                 onButtonClick()
                 hideOverlay()

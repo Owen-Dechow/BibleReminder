@@ -28,7 +28,7 @@ fun sendNotification(
     val notification = NotificationCompat.Builder(context, "bible_usage_alerts")
         .setContentTitle(title)
         .setContentText(message)
-        .setSmallIcon(android.R.drawable.ic_dialog_info)
+        .setSmallIcon(R.drawable.ic_notification)
         .setAutoCancel(true)
         .build()
 
