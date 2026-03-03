@@ -21,6 +21,7 @@
         android:id="@+id/access_info_back_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
         android:text="@string/access_info_back_btn_txt"
         android:textAlignment="center"
         android:textAllCaps="false"
