@@ -1,5 +1,6 @@
 package com.dechow.owen.bible_reminder
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
+import androidx.core.content.edit
 
 const val MaxRatio = 10.0
 
@@ -26,12 +28,23 @@ class MainActivity : ComponentActivity() {
         updateServiceSwitch()
         setupButtons()
         setupTimeSlider()
+        firstLaunchCheck()
     }
 
     override fun onResume() {
         super.onResume()
         updateSwitches()
         updateServiceSwitch()
+    }
+
+    fun firstLaunchCheck() {
+        val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+        val isFirstLaunch = prefs.getBoolean("first_launch", true)
+
+        if (isFirstLaunch) {
+            startActivity(Intent(this, AccessInfoActivity::class.java))
+            prefs.edit { putBoolean("first_launch", false)}
+        }
     }
 
     private fun sendUpdateBroadcast() {
@@ -48,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
     private fun setSliderNum(num: Double) {
         val number: TextView = findViewById(R.id.bible_app_view_number)
-        number.text = ((100 * num).roundToInt() / 100).toString()
+        number.text = ((100 * num).roundToInt().toFloat() / 100).toString()
     }
 
     private fun setupTimeSlider() {
@@ -110,8 +123,15 @@ class MainActivity : ComponentActivity() {
         timeResetButton.setOnClickListener {
             sendReloadDataBroadcast()
         }
+
+        val accessInfoButton: Button = findViewById(R.id.access_info_btn)
+        accessInfoButton.setOnClickListener {
+            val intent = Intent(this, AccessInfoActivity::class.java)
+            startActivity(intent)
+        }
     }
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun updateServiceSwitch() {
         val serviceSwitch: Switch = findViewById(R.id.service_switch)
 
@@ -141,6 +161,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun updateSwitches() {
         val accessPermission: Switch = findViewById(R.id.accessibility_switch)
         accessPermission.isChecked = hasAccessibilityPermissions(this)
@@ -152,12 +173,6 @@ class MainActivity : ComponentActivity() {
         overlayPermission.isChecked = hasDrawOverlayPermission(this)
         overlayPermission.setOnClickListener {
             requestDrawOverlayPermission(this)
-        }
-
-        val usagePermission: Switch = findViewById(R.id.usage_switch)
-        usagePermission.isChecked = hasUsagePermission(this)
-        usagePermission.setOnClickListener {
-            requestUsagePermission(this)
         }
 
         val notificationPermission: Switch = findViewById(R.id.notification_switch)

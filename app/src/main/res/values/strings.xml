@@ -15,6 +15,10 @@
     <string name="app_icon_description">App Icon</string>
     <string name="time_ratio_label">Bible App Time Ratio</string>
     <string name="open_bible_btn">Open You Version</string>
+    <string name="open_bible_txt">Time to take a break and read your Bible!</string>
     <string name="bible_switch_txt">You Version Installed</string>
     <string name="info">Created by Owen Dechow</string>
+    <string name="access_btn_info_text">(?)</string>
+    <string name="access_info_txt">Access Info Text</string>
+    <string name="access_info_back_btn_txt">Return</string>
 </resources>

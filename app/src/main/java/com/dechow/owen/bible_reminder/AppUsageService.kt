@@ -74,8 +74,12 @@ class AppUsageService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        try {
         if (!shouldRun(event)) return
         onAppChange(event!!.packageName.toString())
+        } catch (e: Exception) {
+           sendNotification(this@AppUsageService, e.message.toString(), e.stackTrace.toString(), 10)
+        }
     }
 
     private fun onAppChange(pack: String) {

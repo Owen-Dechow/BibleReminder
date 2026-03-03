@@ -2,7 +2,6 @@ package com.dechow.owen.bible_reminder
 
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.Activity
-import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,21 +20,6 @@ fun requestDrawOverlayPermission(context: Context) {
     context.startActivity(intent)
 }
 
-fun hasUsagePermission(context: Context): Boolean {
-    val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-    val mode = appOps.checkOpNoThrow(
-        AppOpsManager.OPSTR_GET_USAGE_STATS,
-        android.os.Process.myUid(),
-        context.packageName
-    )
-    return mode == AppOpsManager.MODE_ALLOWED
-}
-
-fun requestUsagePermission(context: Context) {
-    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-    context.startActivity(intent)
-}
-
 fun hasNotificationPermission(context: Context): Boolean {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val status = ContextCompat.checkSelfPermission(
@@ -48,13 +32,14 @@ fun hasNotificationPermission(context: Context): Boolean {
     }
 }
 
-fun requestNotificationPermission(activity: Activity) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        ActivityCompat.requestPermissions(
-            activity,
-            arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-            1001
-        )
+fun requestNotificationPermission(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+
+        context.startActivity(intent)
     }
 }
 
@@ -75,8 +60,7 @@ fun requestAccessibilityPermissions(context: Context) {
 }
 
 fun hasAllPermissions(context: Context): Boolean {
-    return hasUsagePermission(context)
-            && hasAccessibilityPermissions(context)
+    return hasAccessibilityPermissions(context)
             && hasDrawOverlayPermission(context)
             && isYouVersionInstalled(context)
 }

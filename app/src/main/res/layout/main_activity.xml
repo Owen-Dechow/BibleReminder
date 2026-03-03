@@ -2,15 +2,16 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
-        android:minWidth="320dp"
         android:layout_height="0dp"
         android:gravity="center"
+        android:minWidth="320dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,35 +34,50 @@
             android:layout_height="wrap_content"
             android:text="@string/info" />
 
-        <Switch
-            android:id="@+id/accessibility_switch"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="@string/accessibility_permission" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/accessibility_switch"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/accessibility_permission"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <Button
+                android:id="@+id/access_info_btn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_weight="0"
+                android:contentDescription="@string/access_btn_info_text"
+                android:includeFontPadding="false"
+                android:text="@string/access_btn_info_text" />
+
+        </LinearLayout>
 
         <Switch
             android:id="@+id/overlay_switch"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="@string/overlay_permission" />
+            android:text="@string/overlay_permission"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <Switch
             android:id="@+id/notification_switch"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="@string/notification_permission" />
-
-        <Switch
-            android:id="@+id/usage_switch"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="@string/usage_permission" />
+            android:text="@string/notification_permission"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <Switch
             android:id="@+id/bible_installed_switch"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="@string/bible_switch_txt" />
+            android:text="@string/bible_switch_txt"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <Button
             android:id="@+id/bible_apps_btn"
@@ -109,6 +125,7 @@
             android:id="@+id/service_switch"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="@string/service_switch_txt" />
+            android:text="@string/service_switch_txt"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
